@@ -37,6 +37,12 @@ app.use(function (req, res, next) {
 //Routes or REST API Endpoints  or RESTfull webservices endpoints
 /*  */
 
+
+/* ---------------------------------------------------------------
+        Task List / Categories
+------------------------------------------------------------------*/
+
+
 //get all tasklist
 app.get('/task-list', (req, res, ) => {
     TaskList.find({})
@@ -117,3 +123,85 @@ app.delete('/task-list/:tasklistId', (req, res) => {
     });
 })
 
+
+/* ---------------------------------------------------------------
+        Task List items / products
+------------------------------------------------------------------ */
+
+
+//get all tasks in tasklist
+app.get('/task-list/:tasklistId/tasks', (req, res, ) => {
+    Task.find({_tasklistId:req.params.tasklistId})
+        .then((list) => {
+            res.status(200);
+            res.send(list);
+        })
+        .catch((error) => {
+            console.log(error)
+        });
+})
+
+//create a task in tasklist
+app.post('/task-list/:tasklistId/tasks', (req, res) => {
+    let taskObj = {'title': req.body.title, '_tasklistId': req.params.tasklistId}
+    Task(taskObj).save()
+        .then((list) => {
+            res.status(201);
+            res.send(list);
+            
+        })
+        .catch((error) => {
+            console.log(error)
+        });
+})
+
+//get one task by id in tasklist
+app.get('/task-list/:tasklistId/tasks/:taskId', (req, res, ) => {
+    Task.findOne({_taskId:req.params.tasklistId, _id:req.params.taskId})
+        .then((list) => {
+            res.status(200);
+            res.send(list);
+        })
+        .catch((error) => {
+            console.log(error)
+        });
+})
+
+//update task by id
+// PUT - for complete update, PATCH - for partial update
+app.put('/task-list/:tasklistId/tasks/:taskId', (req, res) => {
+    Task.findOneAndUpdate({_id: req.params.tasklistId, _id:req.params.taskId}, {$set: req.body}, {new: true})
+    .then((list) => {
+        res.status(200);
+        res.send(list);
+        
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+})
+
+app.patch('/task-list/:tasklistId/tasks/:taskId', (req, res) => {
+    Task.findOneAndUpdate({_id: req.params.tasklistId, _id:req.params.taskId}, {$set: req.body},{new: true})
+    .then((tasklist) => {
+        res.status(200);
+        res.send(tasklist);
+        
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+})
+
+//delete tasklist by id
+app.delete('/task-list/:tasklistId/tasks/:taskId', (req, res) => {
+    TaskList.findOneAndDelete({_id: req.params.tasklistId,_id:req.params.taskId},{new: true})
+    .then((tasklist) => {
+        res.status(200);
+        res.send(tasklist);
+        
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+})
