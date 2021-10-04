@@ -112,17 +112,28 @@ app.patch('/task-list/:tasklistId', (req, res) => {
 
 //delete tasklist by id
 app.delete('/task-list/:tasklistId', (req, res) => {
+
+    const deleteAllContainingTask = (tasklist) => {
+        Task.deleteMany({_tasklistId: req.params.tasklistId})
+        .then(()=>{return tasklist})
+        .catch((error) => {
+            console.log(error)
+        })
+    }
+    
     TaskList.findOneAndDelete({_id: req.params.tasklistId},{new: true})
     .then((tasklist) => {
+        deleteAllContainingTask(tasklist)
         res.status(200);
         res.send(tasklist);
-        
     })
     .catch((error) => {
         console.log(error)
     });
 })
 
+//delete all tasks if tasklist is deleted
+    
 
 /* ---------------------------------------------------------------
         Task List items / products
